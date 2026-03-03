@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Main : MonoBehaviour
+public class ServerMain : MonoBehaviour
 {
     SocketServer _server;
     FrameSyncManager _frameSync;

@@ -3,7 +3,9 @@ using System.IO;
 /// <summary>
 /// Socket通信过程中的数据包 处理具体拆包装包逻辑
 /// </summary>
-public class SocketDataPack
+namespace Client
+{
+    public class SocketDataPack
 {
     // 消息：数据总长度(4byte) + 数据类型(2byte) + 数据(N byte)
     public static int HEAD_DATA_LEN = 4;
@@ -101,4 +103,5 @@ public class SocketDataPack
 
 
     }
+}
 }

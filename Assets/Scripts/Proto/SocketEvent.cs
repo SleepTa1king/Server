@@ -1,7 +1,7 @@
 ﻿/// <summary>
 /// 网络事件协议ID枚举
 /// </summary>
-public enum SocketEvent : ushort
+public enum SocketEvent
 {
     // --- 系统级 ---
     sc_head = 0x0001,       // 心跳包
