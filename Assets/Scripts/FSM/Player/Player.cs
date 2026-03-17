@@ -26,7 +26,7 @@ public class Player:Entity<Player>
     public Transform skin;
     public Pole pole { get; protected set; }
 
-    public Vector3 m_skinInitialPosition = Vector3 .zero;
+    public Vector3 m_skinInitialPosition = Vector3.zero;
     public Quaternion m_skinInitialRotation = Quaternion.identity;
     public virtual bool isAlive => !health.isEmpty;
 
@@ -45,12 +45,22 @@ public class Player:Entity<Player>
         InitializeTag();
         InititalRespawn();
 
+        if (skin != null)
+        {
+            m_skinInitialPosition = skin.localPosition;
+            m_skinInitialRotation = skin.localRotation;
+        }
+        else
+        {
+            var animator = GetComponentInChildren<Animator>();
+            if (animator != null) skin = animator.transform;
+        }
+
         entityEvents.OnGroundEnter.AddListener(() => 
         { 
             ResetJumps(); 
             ResetAirDash();
             ResetAirSpin();
-           
         });
         entityEvents.OnRailsEnter.AddListener(() =>
         {
@@ -59,7 +69,6 @@ public class Player:Entity<Player>
             ResetAirDash();
             StartGrind();
         });
-       
     }
 
     public virtual void StartGrind() => states.Change<RailGrindPlayerState>();
@@ -69,23 +78,17 @@ public class Player:Entity<Player>
     protected virtual void InitializeHealth() => health = GetComponent<Health>();
     protected virtual void InitializeTag() => tag = GameTags.Player;
 
-
     public virtual void Accelerate(Vector3 direction, float deltaTime)
     {
         var turningDrag = isGrounded && inputs.GetRun() ? stats.current.runningTurningDrag : stats.current.turningDrag;
         var acceleration = isGrounded && inputs.GetRun() ? stats.current.runningAcceleration : stats.current.acceleration;
         var finalAcceleration = isGrounded ? acceleration : stats.current.airAcceleration;
         var topSpeed = isGrounded && inputs.GetRun() ? stats.current.runningTopSpeed : stats.current.topSpeed;
-     
         Accelerate(direction, turningDrag, finalAcceleration, topSpeed, deltaTime);
     }
     public virtual void Accelerate(Vector3 direction) => Accelerate(direction, Time.deltaTime);
 
-    public virtual void AccelerateToInputDirection(float deltaTime)
-    {
-        var inputDirection = inputs.GetMovementCameraDirection();
-        Accelerate(inputDirection, deltaTime);
-    }
+    public virtual void AccelerateToInputDirection(float deltaTime) => Accelerate(inputs.GetMovementCameraDirection(), deltaTime);
     public virtual void AccelerateToInputDirection() => AccelerateToInputDirection(Time.deltaTime);
 
     public virtual void CrawlingAccelerate(Vector3 direction, float deltaTime) =>
@@ -110,13 +113,7 @@ public class Player:Entity<Player>
     public virtual void Decelerate(float deltaTime) => Decelerate(stats.current.deceleration, deltaTime);
     public virtual void Decelerate() => Decelerate(Time.deltaTime);
 
-    public virtual void Friction(float deltaTime)
-    {
-        if (OnSlopeGround())
-            Decelerate(stats.current.slopeFriction, deltaTime);
-        else
-            Decelerate(stats.current.friction, deltaTime);
-    }
+    public virtual void Friction(float deltaTime) => Decelerate(isGrounded && OnSlopeGround() ? stats.current.slopeFriction : stats.current.friction, deltaTime);
     public virtual void Friction() => Friction(Time.deltaTime);
 
     public virtual void FaceDirectionSmooth(Vector3 direction, float deltaTime) => FaceDirection(direction, stats.current.rotationSpeed, deltaTime);
@@ -129,7 +126,6 @@ public class Player:Entity<Player>
             var speed = verticalVelocity.y;
             var force = verticalVelocity.y > 0 ? stats.current.gravity : stats.current.fallGrivity;
             speed -= force * gravityMultiplier * deltaTime;
-
             speed = Mathf.Max(speed, -stats.current.gravityTopSpeed);
             verticalVelocity = new Vector3(0, speed, 0);
         }
@@ -180,9 +176,8 @@ public class Player:Entity<Player>
         if (!health.isEmpty && !health.recovering)
         {
             health.Damage(amount);
-            var damageDir = origin - transform.position;
+            var damageDir = (origin - transform.position).normalized;
             damageDir.y = 0;
-            damageDir = damageDir.normalized;
             FaceDirection(damageDir);
 
             lateralVelocity = -transform.forward * stats.current.hurtBackwardsForce;
@@ -459,7 +454,7 @@ public class Player:Entity<Player>
         m_respawnPosition = transform.position;
         m_respawnRotation = transform.rotation;
     }
-    public virtual void SetRespawn(Vector3 positon,Quaternion rotation)
+    public virtual void SetRespawn(Vector3 position, Quaternion rotation)
     {
         m_respawnPosition = position;
         m_respawnRotation = rotation;
@@ -476,6 +471,15 @@ public class Player:Entity<Player>
     public virtual void SetInput(CSInput input)
     {
         currentInput = input;
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        if (inputs != null && !inputs.UseNetworkInput)
+        {
+            LogicUpdate(Time.deltaTime);
+        }
     }
 
     public override void LogicUpdate(float deltaTime)

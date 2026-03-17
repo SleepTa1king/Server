@@ -71,20 +71,34 @@ public class PlayerAnimator:MonoBehaviour
 
     protected virtual void LateUpdate() => HandleAnimatorParameters();
 
+    private int _lastReportedState = -1;
+
     /// <summary>
     /// 每帧更新 Animator 参数，使动画与玩家实际状态同步
     /// </summary>
     protected virtual void HandleAnimatorParameters()
     {
+        // 安全检查：如果 Animator 没有控制器，直接返回，避免报错
+        if (animator == null || animator.runtimeAnimatorController == null) return;
+
+        var currentStateIndex = m_player.states.index;
+        
+        // 调试日志：只有当状态变化时才输出一次
+        if (currentStateIndex != _lastReportedState)
+        {
+            Debug.Log($"[Animator Sync] 角色状态变更: {m_player.states.lastIndex} -> {currentStateIndex} (ID: {gameObject.name})");
+            _lastReportedState = currentStateIndex;
+        }
+
         var lateralSpeed = m_player.lateralVelocity.magnitude; // 横向速度
         var verticalSpeed = m_player.verticalVelocity.y;       // 纵向速度
         // 横向动画播放速度 = 横向速度 / 最大速度，保证最小速度不低于 minLateralAnimationSpeed
         var lateralAnimationSpeed = Mathf.Max(minLateralAnimationSpeed, lateralSpeed / m_player.stats.current.topSpeed);
 
         // 设置 Animator 参数
-        animator.SetInteger(m_stateHash, m_player.states.index);
+        animator.SetInteger(m_stateHash, currentStateIndex);
         animator.SetInteger(m_lastStateHash, m_player.states.lastIndex);
-        animator.SetInteger(m_jumpCounterHash,m_player.jumpCounter);
+        animator.SetInteger(m_jumpCounterHash, m_player.jumpCounter);
         animator.SetFloat(m_lateralSpeedHash, lateralSpeed);
         animator.SetFloat(m_verticalSpeedHash, verticalSpeed);
         animator.SetFloat(m_lateralAnimationSpeedHash, lateralAnimationSpeed);
@@ -98,6 +112,22 @@ public class PlayerAnimator:MonoBehaviour
     protected virtual void InitializePlayer()
     {
         m_player = GetComponent<Player>();
+        
+        // 如果 Inspector 里没手动拖，就自动搜一下
+        if (animator == null)
+        {
+            animator = GetComponent<Animator>();
+            if (animator == null)
+            {
+                animator = GetComponentInChildren<Animator>();
+            }
+        }
+
+        if (animator == null)
+        {
+            Debug.LogError("PlayerAnimator: 找不到 Animator 组件！请在 Inspector 中手动分配或确保物体上有 Animator。", this);
+        }
+
         m_player.states.events.onChange.AddListener(HandleForcedTransitions);
     }
 
@@ -106,8 +136,15 @@ public class PlayerAnimator:MonoBehaviour
     /// </summary>
     protected virtual void InitializeAnimatorTriggers()
     {
-        // 给 Animator 发送 trigger（触发器参数），用于过渡动画
-        m_player.states.events.onChange.AddListener(() => animator.SetTrigger(m_onStateChangedHash));
+        if (animator != null && animator.runtimeAnimatorController != null)
+        {
+            // 给 Animator 发送 trigger（触发器参数），用于过渡动画
+            m_player.states.events.onChange.AddListener(() => animator.SetTrigger(m_onStateChangedHash));
+        }
+        else
+        {
+            Debug.LogWarning($"PlayerAnimator: 物体 {gameObject.name} 的 Animator 没有分配 Controller，将跳过状态切换动画设置。", this);
+        }
     }
 
     /// <summary>

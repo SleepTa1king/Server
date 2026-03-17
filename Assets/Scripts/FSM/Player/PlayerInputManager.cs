@@ -110,11 +110,19 @@ public class PlayerInputManager : MonoBehaviour
         }
 
         var direction = GetMovementDirection();
+        
+        // 增加安全检查：如果 m_camera 为空，尝试再次查找
+        if (m_camera == null) m_camera = Camera.main;
+
         if (direction.sqrMagnitude > 0)
         {
-            var rotation = Quaternion.AngleAxis(m_camera.transform.eulerAngles.y, Vector3.up);
-            direction = rotation * direction;
-            direction = direction.normalized;
+            // 如果还是找不到相机（比如场景里真的没有相机），就退而求其次返回原始方向
+            if (m_camera != null)
+            {
+                var rotation = Quaternion.AngleAxis(m_camera.transform.eulerAngles.y, Vector3.up);
+                direction = rotation * direction;
+                direction = direction.normalized;
+            }
         }
         return direction;
     }

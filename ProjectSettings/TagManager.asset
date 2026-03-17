@@ -3,7 +3,13 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Platform
+  - Volume/Water
+  - Interactive/Rail
+  - Pole
+  - Spring
+  - Hazard
   layers:
   - Default
   - TransparentFX
