@@ -10,17 +10,25 @@ public class ClientMain : MonoBehaviour
     {
         _client = new SocketClient("127.0.0.1", 6854);
 
-        _frameSync = new ClientFrameSync(_client, playerId: 1);
+        // TODO: 实际应用中应该根据服务器返回的消息来确定 playerId
+        int myPlayerId = 1;
+        _frameSync = new ClientFrameSync(_client, playerId: myPlayerId);
 
         _client.OnConnectSuccess += () =>
         {
             Debug.Log("连接成功");
+            
+            // 1. 生成本地玩家
+            PlayerManager.Instance.SpawnPlayer(myPlayerId, Vector3.zero, isLocal: true);
+            
+            // 2. 开启同步循环
             _frameSync.Start();
         };
         _client.OnDisconnect += () =>
         {
             Debug.Log("断开连接");
             _frameSync.Stop();
+            PlayerManager.Instance.ClearAll();
         };
         _client.OnReceive += (pack) =>
         {
@@ -28,6 +36,18 @@ public class ClientMain : MonoBehaviour
             {
                 case SocketEvent.sc_frame:
                     // 收到服务端帧数据
+                    var frame = ProtoHelper.Deserialize<SCFrame>(pack.Data);
+                    
+                    // 在执行帧之前，检查是否有新玩家需要生成
+                    foreach(var input in frame.Inputs)
+                    {
+                        if (PlayerManager.Instance.GetPlayer(input.PlayerId) == null)
+                        {
+                            Debug.Log($"[ClientMain] 发现新玩家 {input.PlayerId}，正在生成...");
+                            PlayerManager.Instance.SpawnPlayer(input.PlayerId, Vector3.zero, isLocal: false);
+                        }
+                    }
+
                     _frameSync.ReceiveFrame(pack.Data);
                     break;
             }

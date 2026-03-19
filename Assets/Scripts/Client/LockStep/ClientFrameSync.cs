@@ -11,6 +11,12 @@ public class ClientFrameSync
 {
     public const float LOGIC_DELTA = 1f / 15f;  // 和服务端保持一致
 
+    // 输入掩码定义
+    public const int MASK_JUMP = 1;
+    public const int MASK_DASH = 2;
+    public const int MASK_SPIN = 4;
+    public const int MASK_PICK = 8;
+
     private float _accumulator = 0f;
     private bool _isRunning = false;
 
@@ -19,8 +25,6 @@ public class ClientFrameSync
     
     // 引用本地玩家，用于采集输入
     private Player _localPlayer;
-    // 引用所有玩家（包括本地和远程），用于执行同步逻辑
-    private Dictionary<int, Player> _playerDic = new Dictionary<int, Player>();
 
     // 缓存收到的服务端帧，按帧号排序执行
     private Queue<SCFrame> _frameQueue = new Queue<SCFrame>();
@@ -33,42 +37,22 @@ public class ClientFrameSync
         _playerId = playerId;
     }
 
-    /// <summary>
-    /// 注册场景中的玩家实体
-    /// </summary>
-    public void RegisterPlayer(int id, Player player)
-    {
-        _playerDic[id] = player;
-        
-        // 开启网络输入模式（由帧同步驱动）
-        if (player.inputs != null)
-        {
-            player.inputs.UseNetworkInput = true;
-        }
-
-        // 如果是本地玩家，保存引用用于采集输入
-        if (id == _playerId)
-        {
-            _localPlayer = player;
-        }
-    }
-
     public void Start()
     {
         _isRunning = true;
         _accumulator = 0f;
         _frameQueue.Clear();
+        
+        // 自动获取本地玩家引用（如果已经由 PlayerManager 生成）
+        if (_localPlayer == null)
+        {
+            _localPlayer = PlayerManager.Instance.GetPlayer(_playerId);
+        }
     }
 
     public void Stop()
     {
         _isRunning = false;
-        // 恢复所有实体的硬件输入模式（可选）
-        foreach(var p in _playerDic.Values)
-        {
-            if (p != null && p.inputs != null)
-                p.inputs.UseNetworkInput = false;
-        }
     }
 
     /// <summary>
@@ -109,11 +93,13 @@ public class ClientFrameSync
         // 这一帧包含了所有玩家的操作
         foreach(var input in frame.Inputs)
         {
-            if(_playerDic.TryGetValue(input.PlayerId, out var player))
+            var player = PlayerManager.Instance.GetPlayer(input.PlayerId);
+            if(player != null)
             {
-                // 1. 注入同步后的输入
+                // 1. 开启网络同步模式
                 if (player.inputs != null)
                 {
+                    player.inputs.UseNetworkInput = true;
                     player.inputs.NetworkInput = input;
                 }
                 
@@ -128,17 +114,18 @@ public class ClientFrameSync
     /// </summary>
     private void SendInput()
     {
-        if (_localPlayer == null || _localPlayer.inputs == null) return;
+        if (_localPlayer == null) 
+        {
+            _localPlayer = PlayerManager.Instance.GetPlayer(_playerId);
+            if (_localPlayer == null) return;
+        }
 
-        // 注意：即便开启了 UseNetworkInput，GetMovementDirection 内部会自动切换
-        // 这里我们需要在逻辑帧采样原始意图
-        
         var input = new CSInput
         {
             PlayerId = _playerId,
-            MoveX = Input.GetAxis("Horizontal"), // 或者通过 _localPlayer.inputs 获得
-            MoveZ = Input.GetAxis("Vertical"),
-            ActionType = GetActionMask(),
+            MoveX = _localPlayer.inputs.GetMovementDirection().x,
+            MoveZ = _localPlayer.inputs.GetMovementDirection().z,
+            Buttons = GetActionMask(),
             RotationY = _localPlayer.transform.eulerAngles.y
         };
 
@@ -148,10 +135,14 @@ public class ClientFrameSync
     
     private int GetActionMask()
     {
+        if (_localPlayer == null || _localPlayer.inputs == null) return 0;
+
         int mask = 0;
-        // 示例：用位运算存储按键状态
-        if (Input.GetButton("Jump")) mask |= 1;
-        if (Input.GetKeyDown(KeyCode.LeftShift)) mask |= 2;
+        // 注意：这里需要调用非网络同步模式下的原始输入检测
+        // 假设我们增加了一套用于采样的方法或者直接访问 InputAction
+        if (Input.GetButton("Jump")) mask |= MASK_JUMP;
+        if (Input.GetKeyDown(KeyCode.LeftShift)) mask |= MASK_DASH;
+        // ... 根据项目按键配置补充
         return mask;
     }
 }

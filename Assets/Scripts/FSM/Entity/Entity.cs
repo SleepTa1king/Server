@@ -15,6 +15,7 @@ public abstract class EntityBase : MonoBehaviour
     public EntityEvents entityEvents;
     protected readonly float m_groundOffset = 0.1f;
     public Vector3 unsizedPosition => position - transform.up * height * 0.5f + transform.up * originHeight * 0.5f;
+    [field: SerializeField]
     public bool isGrounded { get; protected set; } = true;
     public bool onRails { get; set; }
     public SplineContainer rails { get; protected set; }

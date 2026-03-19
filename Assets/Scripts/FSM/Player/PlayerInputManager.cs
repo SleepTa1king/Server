@@ -38,12 +38,12 @@ public class PlayerInputManager : MonoBehaviour
     protected virtual void Start()
     {
         m_camera = Camera.main;
-        actions.Enable();
+        if (actions != null) actions.Enable();
     }
 
     protected virtual void Update()
     {
-        if (m_jump.WasPressedThisFrame())
+        if (m_jump != null && m_jump.WasPressedThisFrame())
         {
             m_lastJumpTime = Time.time;
         }
@@ -52,6 +52,7 @@ public class PlayerInputManager : MonoBehaviour
     protected virtual void OnDisable() => actions?.Disable();
     protected virtual void CacheActions()
     {
+        if (actions == null) return;
         m_movement = actions["Movement"];
         m_look = actions["Look"];
         m_jump = actions["Jump"];
@@ -74,6 +75,12 @@ public class PlayerInputManager : MonoBehaviour
     public bool UseNetworkInput { get; set; } = false;
     public CSInput NetworkInput { get; set; } = new CSInput();
 
+    // 掩码需与 ClientFrameSync 保持一致
+    public const int MASK_JUMP = 1;
+    public const int MASK_DASH = 2;
+    public const int MASK_SPIN = 4;
+    public const int MASK_PICK = 8;
+
     public virtual void LockMovementDirection(float direction = 0.25f)
     {
         m_movementDirectionUnlockTime = Time.time + direction;
@@ -88,6 +95,8 @@ public class PlayerInputManager : MonoBehaviour
 
         if (Time.time < m_movementDirectionUnlockTime)
             return Vector3.zero;
+        
+        if (m_movement == null) return Vector3.zero;
         var value = m_movement.ReadValue<Vector2>();
         return GetAxisWithCrossDeadZone(value);
     }
@@ -116,7 +125,6 @@ public class PlayerInputManager : MonoBehaviour
 
         if (direction.sqrMagnitude > 0)
         {
-            // 如果还是找不到相机（比如场景里真的没有相机），就退而求其次返回原始方向
             if (m_camera != null)
             {
                 var rotation = Quaternion.AngleAxis(m_camera.transform.eulerAngles.y, Vector3.up);
@@ -129,6 +137,7 @@ public class PlayerInputManager : MonoBehaviour
 
     public virtual Vector3 GetLookDirection()
     {
+        if (m_look == null) return Vector3.zero;
         var value = m_look.ReadValue<Vector2>();
         if (isLookingWithMouse())
         {
@@ -139,7 +148,7 @@ public class PlayerInputManager : MonoBehaviour
 
     public virtual bool isLookingWithMouse()
     {
-        if (m_look.activeControl == null)
+        if (m_look == null || m_look.activeControl == null)
         {
             return false;
         }
@@ -150,7 +159,7 @@ public class PlayerInputManager : MonoBehaviour
     {
         if (UseNetworkInput)
         {
-            return (NetworkInput.ActionType & 1) != 0;
+            return (NetworkInput.Buttons & MASK_JUMP) != 0;
         }
 
         if (m_lastJumpTime != null && Time.time - m_lastJumpTime < k_jumpBuffer)
@@ -165,26 +174,26 @@ public class PlayerInputManager : MonoBehaviour
     {
         if (UseNetworkInput)
         {
-            return (NetworkInput.ActionType & 2) != 0;
+            return (NetworkInput.Buttons & MASK_DASH) != 0;
         }
-        return m_dash.WasPressedThisFrame();
+        return m_dash != null && m_dash.WasPressedThisFrame();
     }
 
     public virtual bool GetJumpUp()
     {
         if (UseNetworkInput) return false;
-        return m_jump.WasReleasedThisFrame();
+        return m_jump != null && m_jump.WasReleasedThisFrame();
     }
-    public virtual bool GetStompDown() => UseNetworkInput ? false : m_stomp.WasPressedThisFrame();
-    public virtual bool GetSpinDown() => UseNetworkInput ? (NetworkInput.ActionType & 4) != 0 : m_spin.WasPressedThisFrame();
-    public virtual bool GetAirDiveDown() => UseNetworkInput ? false : m_aridive.WasPressedThisFrame();
-    public virtual bool GetCrouchAndCraw() => UseNetworkInput ? false : m_crouch.IsPressed();
-    public virtual bool GetGrindBrake() => UseNetworkInput ? false : m_grindBrake.IsPressed();
-    public virtual bool GetDive() => UseNetworkInput ? false : m_dive.IsPressed();
-    public virtual bool GetGlide() => UseNetworkInput ? false : m_glide.IsPressed();
-    public virtual bool GetPauseDown() => UseNetworkInput ? false : m_pause.WasPressedThisFrame();
-    public virtual bool GetReleaseLedgeDown() => UseNetworkInput ? false : m_releaseLedge.WasPressedThisFrame();
-    public virtual bool GetRun() => UseNetworkInput ? false : m_run.IsPressed();
-    public virtual bool GetRunUp() => UseNetworkInput ? false : m_run.WasReleasedThisFrame();
-    public virtual bool GetPickAndDropDown() => UseNetworkInput ? (NetworkInput.ActionType & 8) != 0 : m_pickAndThrow.WasPressedThisFrame();
+    public virtual bool GetStompDown() => UseNetworkInput ? false : (m_stomp != null && m_stomp.WasPressedThisFrame());
+    public virtual bool GetSpinDown() => UseNetworkInput ? (NetworkInput.Buttons & MASK_SPIN) != 0 : (m_spin != null && m_spin.WasPressedThisFrame());
+    public virtual bool GetAirDiveDown() => UseNetworkInput ? false : (m_aridive != null && m_aridive.WasPressedThisFrame());
+    public virtual bool GetCrouchAndCraw() => UseNetworkInput ? false : (m_crouch != null && m_crouch.IsPressed());
+    public virtual bool GetGrindBrake() => UseNetworkInput ? false : (m_grindBrake != null && m_grindBrake.IsPressed());
+    public virtual bool GetDive() => UseNetworkInput ? false : (m_dive != null && m_dive.IsPressed());
+    public virtual bool GetGlide() => UseNetworkInput ? false : (m_glide != null && m_glide.IsPressed());
+    public virtual bool GetPauseDown() => UseNetworkInput ? false : (m_pause != null && m_pause.WasPressedThisFrame());
+    public virtual bool GetReleaseLedgeDown() => UseNetworkInput ? false : (m_releaseLedge != null && m_releaseLedge.WasPressedThisFrame());
+    public virtual bool GetRun() => UseNetworkInput ? false : (m_run != null && m_run.IsPressed());
+    public virtual bool GetRunUp() => UseNetworkInput ? false : (m_run != null && m_run.WasReleasedThisFrame());
+    public virtual bool GetPickAndDropDown() => UseNetworkInput ? (NetworkInput.Buttons & MASK_PICK) != 0 : (m_pickAndThrow != null && m_pickAndThrow.WasPressedThisFrame());
 }
