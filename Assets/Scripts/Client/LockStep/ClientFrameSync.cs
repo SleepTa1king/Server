@@ -120,14 +120,25 @@ public class ClientFrameSync
             if (_localPlayer == null) return;
         }
 
+        var rawDir = _localPlayer.inputs.GetRawInputDirection();
+
+        // 防止 NaN 导致 Socket 崩溃
+        if (float.IsNaN(rawDir.x)) rawDir.x = 0;
+        if (float.IsNaN(rawDir.z)) rawDir.z = 0;
+
         var input = new CSInput
         {
             PlayerId = _playerId,
-            MoveX = _localPlayer.inputs.GetMovementDirection().x,
-            MoveZ = _localPlayer.inputs.GetMovementDirection().z,
-            Buttons = GetActionMask(),
+            MoveX = rawDir.x,
+            MoveZ = rawDir.z,
+            Buttons = _localPlayer.inputs.GetRawActionMask(),
             RotationY = _localPlayer.transform.eulerAngles.y
         };
+
+        if (input.MoveX < -0.1f) 
+        {
+            Debug.Log($"[FrameSync] 发送向左输入: MoveX={input.MoveX}, PlayerId={input.PlayerId}");
+        }
 
         byte[] data = ProtoHelper.Serialize(input);
         _client.Send((ushort)SocketEvent.cs_input, data);
@@ -136,13 +147,6 @@ public class ClientFrameSync
     private int GetActionMask()
     {
         if (_localPlayer == null || _localPlayer.inputs == null) return 0;
-
-        int mask = 0;
-        // 注意：这里需要调用非网络同步模式下的原始输入检测
-        // 假设我们增加了一套用于采样的方法或者直接访问 InputAction
-        if (Input.GetButton("Jump")) mask |= MASK_JUMP;
-        if (Input.GetKeyDown(KeyCode.LeftShift)) mask |= MASK_DASH;
-        // ... 根据项目按键配置补充
-        return mask;
+        return _localPlayer.inputs.GetRawActionMask();
     }
 }

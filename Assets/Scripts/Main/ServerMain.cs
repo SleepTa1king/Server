@@ -46,9 +46,11 @@ public class ServerMain : MonoBehaviour
         // 2. 帧同步逻辑 —— 内部自己控制固定步长
         _frameSync?.Tick(Time.deltaTime);
 
-        if (Input.GetKeyDown(KeyCode.A))
+        // 修改测试按键，避免与向左移动 (A 键) 冲突
+        if (Input.GetKeyDown(KeyCode.K))
         {
             _server?.KickOutAll();
+            Debug.Log("服务端主动踢出所有玩家");
         }
         if (Input.GetKeyDown(KeyCode.S))
         {

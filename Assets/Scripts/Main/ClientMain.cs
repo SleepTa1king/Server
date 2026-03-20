@@ -60,15 +60,7 @@ public class ClientMain : MonoBehaviour
         // 帧数据到达时，执行游戏逻辑
         _frameSync.OnFrameExecute += (frame) =>
         {
-            foreach (var input in frame.Inputs)
-            {
-                Debug.LogFormat("帧{0} 玩家{1} 移动({2},{3})",
-                    frame.FrameId, input.PlayerId, input.MoveX, input.MoveZ);
-
-                // TODO: 根据 input 驱动对应角色
-                // var player = PlayerManager.GetPlayer(input.PlayerId);
-                // player.ApplyInput(input);
-            }
+            // 逻辑已经在 _frameSync.ExecuteFrame 中执行，这里不需要重复记录日志
         };
 
         _client.Connect();

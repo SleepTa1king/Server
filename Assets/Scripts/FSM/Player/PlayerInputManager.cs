@@ -101,6 +101,41 @@ public class PlayerInputManager : MonoBehaviour
         return GetAxisWithCrossDeadZone(value);
     }
 
+    /// <summary>
+    /// 获取原始硬件输入（忽略 UseNetworkInput），用于向服务端发送数据
+    /// </summary>
+    public virtual Vector3 GetRawInputDirection()
+    {
+        if (m_movement == null) return Vector3.zero;
+        var value = m_movement.ReadValue<Vector2>();
+        var direction = GetAxisWithCrossDeadZone(value);
+        
+        // 采样时就根据当前相机视角转换为世界坐标，这样同步的是绝对位移
+        if (direction.sqrMagnitude > 0)
+        {
+            if (m_camera == null) m_camera = Camera.main;
+            if (m_camera != null)
+            {
+                var rotation = Quaternion.AngleAxis(m_camera.transform.eulerAngles.y, Vector3.up);
+                direction = rotation * direction;
+            }
+        }
+        return direction;
+    }
+
+    /// <summary>
+    /// 获取原始动作掩码（忽略 UseNetworkInput）
+    /// </summary>
+    public virtual int GetRawActionMask()
+    {
+        int mask = 0;
+        if (m_jump != null && m_jump.IsPressed()) mask |= MASK_JUMP;
+        if (m_dash != null && m_dash.IsPressed()) mask |= MASK_DASH;
+        if (m_spin != null && m_spin.IsPressed()) mask |= MASK_SPIN;
+        if (m_pickAndThrow != null && m_pickAndThrow.IsPressed()) mask |= MASK_PICK;
+        return mask;
+    }
+
     public virtual Vector3 GetAxisWithCrossDeadZone(Vector2 axis)
     {
         var deadzone = InputSystem.settings.defaultDeadzoneMin;
