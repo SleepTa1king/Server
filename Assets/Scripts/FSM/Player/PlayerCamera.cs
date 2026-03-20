@@ -207,6 +207,9 @@ public class PlayerCamera:MonoBehaviour
 
     protected virtual void LateUpdate()
     {
+        // 安全检查：如果玩家不存在，不执行跟随逻辑
+        if (player == null) return;
+
         HandleOrbit();
         HandleVelocityOrbit();
         HandleOffset();

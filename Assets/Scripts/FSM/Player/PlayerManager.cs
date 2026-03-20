@@ -77,7 +77,11 @@ public class PlayerManager : MonoBehaviour
         if (isLocal)
         {
             var cam = FindObjectOfType<PlayerCamera>();
-            if (cam != null) cam.player = newPlayer;
+            if (cam != null)
+            {
+                cam.player = newPlayer;
+                cam.Reset(); // 立即重新对齐位置
+            }
         }
 
         return newPlayer;
