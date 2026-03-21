@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "jft1coMkl+4=",
+  "success": true,
+  "projectFilePath": "E:\\Unityprogram\\U3D\\Server\\ConsoleServer\\ConsoleServer\\ConsoleServer.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Vladm\\.nuget\\packages\\protobuf-net\\3.2.56\\protobuf-net.3.2.56.nupkg.sha512",
+    "C:\\Users\\Vladm\\.nuget\\packages\\protobuf-net.core\\3.2.56\\protobuf-net.core.3.2.56.nupkg.sha512",
+    "C:\\Users\\Vladm\\.nuget\\packages\\system.collections.immutable\\7.0.0\\system.collections.immutable.7.0.0.nupkg.sha512",
+    "C:\\Users\\Vladm\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
