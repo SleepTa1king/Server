@@ -2,11 +2,14 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Collections.Generic;
+using System.Net.Sockets;
 
 namespace Server
 {
     class Program
     {
+        private static int _idCounter = 100; // ID 计数器
+
         static void Main(string[] args)
         {
             string ip = "127.0.0.1";
@@ -20,6 +23,13 @@ namespace Server
             server.OnConnect += (client) =>
             {
                 Console.WriteLine($"[Server] Client connected: {client.RemoteEndPoint}");
+                
+                // --- 修复点：分配 ID 并发送给客户端 ---
+                int id = ++_idCounter;
+                var loginMsg = new SCLogin { PlayerId = id };
+                byte[] data = ProtoHelper.Serialize(loginMsg);
+                server.Send(client, (ushort)SocketEvent.sc_login, data);
+                Console.WriteLine($"[Server] Assigned ID {id} to client.");
             };
 
             server.OnDisconnect += (client) =>
@@ -63,7 +73,6 @@ namespace Server
                     if (key == ConsoleKey.K) { server.KickOutAll(); Console.WriteLine("[Server] Kicked all clients"); }
                 }
 
-                // Sleep a bit to prevent 100% CPU usage
                 Thread.Sleep(1);
             }
 

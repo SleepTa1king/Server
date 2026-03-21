@@ -9,6 +9,7 @@ public enum SocketEvent
     sc_kickout = 0x0003,    // 服务端踢出
 
     // --- 帧同步 ---
+    sc_login = 0x1001,      // 服务端 → 客户端：登录并分配 ID
     cs_input = 0x2001,      // 客户端 → 服务端：本帧输入
     sc_frame = 0x2002,      // 服务端 → 客户端：同步帧数据
 

@@ -50,8 +50,12 @@ public class PlayerCamera:MonoBehaviour
     protected virtual void Start()
     {
         InitializeComponents();
-        InitializeFollower();
-        InitializeCamera();
+        // 如果开始时没玩家，先不初始化 Follower，等到 player 被赋值后再处理
+        if (player != null)
+        {
+            InitializeFollower();
+            InitializeCamera();
+        }
     }
 
     protected virtual void InitializeComponents()
@@ -67,7 +71,10 @@ public class PlayerCamera:MonoBehaviour
 
     protected virtual void InitializeFollower()
     {
-        m_target = new GameObject(k_targetName).transform;
+        if (m_target == null)
+        {
+            m_target = new GameObject(k_targetName).transform;
+        }
         m_target.position = player.transform.position;
     }
 
@@ -80,13 +87,14 @@ public class PlayerCamera:MonoBehaviour
 
     public virtual void Reset()
     {
+        if (player == null || player.controller == null) return;
+        
         m_cameraDistance = maxDistance;
         m_cameraTargetPitch = initialAngle;
         m_cameraTargetYaw = player.transform.rotation.eulerAngles.y;
         m_cameraTargetPosition = player.unsizedPosition + Vector3.up * heightOffset;
-       // m_cameraTargetPosition = player.transform.position + Vector3.up * heightOffset;
         MoveTarget();
-        m_brain.ManualUpdate();
+        if (m_brain != null) m_brain.ManualUpdate();
     }
     
     protected virtual void MoveTarget()
@@ -106,9 +114,10 @@ public class PlayerCamera:MonoBehaviour
     /// </summary>
     protected virtual void HandleOrbit()
     {
-        if(canOrbit)
+        if(canOrbit && player != null && player.inputs != null)
         {
             var direction = player.inputs.GetLookDirection();
+            // ... 其余逻辑保持不变 ...
 
             if(direction.sqrMagnitude > 0)
             {
@@ -207,8 +216,8 @@ public class PlayerCamera:MonoBehaviour
 
     protected virtual void LateUpdate()
     {
-        // 安全检查：如果玩家不存在，不执行跟随逻辑
-        if (player == null) return;
+        // 安全检查：如果玩家或其核心组件不存在，不执行跟随逻辑
+        if (player == null || player.controller == null) return;
 
         HandleOrbit();
         HandleVelocityOrbit();

@@ -5,41 +5,46 @@ public class ClientMain : MonoBehaviour
 {
     SocketClient _client;
     ClientFrameSync _frameSync;
+    int _myPlayerId = 0; // 等待服务端分配
 
     private void Awake()
     {
         _client = new SocketClient("127.0.0.1", 6854);
 
-        // TODO: 实际应用中应该根据服务器返回的消息来确定 playerId
-        int myPlayerId = 1;
-        _frameSync = new ClientFrameSync(_client, playerId: myPlayerId);
-
         _client.OnConnectSuccess += () =>
         {
-            Debug.Log("连接成功");
-            
-            // 1. 生成本地玩家
-            PlayerManager.Instance.SpawnPlayer(myPlayerId, Vector3.zero, isLocal: true);
-            
-            // 2. 开启同步循环
-            _frameSync.Start();
+            Debug.Log("连接服务端成功，等待分配 ID...");
         };
         _client.OnDisconnect += () =>
         {
             Debug.Log("断开连接");
-            _frameSync.Stop();
+            _frameSync?.Stop();
             PlayerManager.Instance.ClearAll();
         };
         _client.OnReceive += (pack) =>
         {
             switch ((SocketEvent)pack.Type)
             {
+                case SocketEvent.sc_login:
+                    // 1. 收到服务端分配的 ID
+                    var loginMsg = ProtoHelper.Deserialize<SCLogin>(pack.Data);
+                    _myPlayerId = loginMsg.PlayerId;
+                    Debug.Log($"[Login] 分配到的 ID 是: {_myPlayerId}");
+
+                    // 2. 初始化帧同步并生成本地角色
+                    _frameSync = new ClientFrameSync(_client, _myPlayerId);
+                    PlayerManager.Instance.SpawnPlayer(_myPlayerId, Vector3.zero, isLocal: true);
+
+                    // 3. 开启同步
+                    _frameSync.Start();
+                    break;
+
                 case SocketEvent.sc_frame:
                     // 收到服务端帧数据
                     var frame = ProtoHelper.Deserialize<SCFrame>(pack.Data);
-                    
+
                     // 在执行帧之前，检查是否有新玩家需要生成
-                    foreach(var input in frame.Inputs)
+                    foreach (var input in frame.Inputs)
                     {
                         if (PlayerManager.Instance.GetPlayer(input.PlayerId) == null)
                         {
@@ -48,19 +53,13 @@ public class ClientMain : MonoBehaviour
                         }
                     }
 
-                    _frameSync.ReceiveFrame(pack.Data);
+                    _frameSync?.ReceiveFrame(pack.Data);
                     break;
             }
         };
         _client.OnError += (ex) =>
         {
             Debug.LogFormat("异常 >>> {0}", ex);
-        };
-
-        // 帧数据到达时，执行游戏逻辑
-        _frameSync.OnFrameExecute += (frame) =>
-        {
-            // 逻辑已经在 _frameSync.ExecuteFrame 中执行，这里不需要重复记录日志
         };
 
         _client.Connect();
@@ -71,7 +70,7 @@ public class ClientMain : MonoBehaviour
         // 1. 网络收发
         _client?.Tick(Time.deltaTime);
 
-        // 2. 帧同步（内部控制发送频率 + 执行服务端帧）
+        // 2. 帧同步
         _frameSync?.Tick(Time.deltaTime);
     }
 

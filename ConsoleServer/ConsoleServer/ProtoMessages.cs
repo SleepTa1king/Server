@@ -26,6 +26,15 @@ public class SCFrame
 }
 
 /// <summary>
+/// 服务端 → 客户端：登录成功，告知分配的 ID
+/// </summary>
+[ProtoContract]
+public class SCLogin
+{
+    [ProtoMember(1)] public int PlayerId;
+}
+
+/// <summary>
 /// 聊天消息
 /// </summary>
 [ProtoContract]
