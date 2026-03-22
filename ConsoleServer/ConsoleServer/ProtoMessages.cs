@@ -1,4 +1,4 @@
-﻿using ProtoBuf;
+using ProtoBuf;
 using System.Collections.Generic;
 
 /// <summary>
@@ -30,6 +30,15 @@ public class SCFrame
 /// </summary>
 [ProtoContract]
 public class SCLogin
+{
+    [ProtoMember(1)] public int PlayerId;
+}
+
+/// <summary>
+/// 客户端 → 服务端：主动上报哈希 ID
+/// </summary>
+[ProtoContract]
+public class CSLogin
 {
     [ProtoMember(1)] public int PlayerId;
 }

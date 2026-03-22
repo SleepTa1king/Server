@@ -8,8 +8,6 @@ namespace Server
 {
     class Program
     {
-        private static int _idCounter = 100; // ID 计数器
-
         static void Main(string[] args)
         {
             string ip = "127.0.0.1";
@@ -22,14 +20,7 @@ namespace Server
 
             server.OnConnect += (client) =>
             {
-                Console.WriteLine($"[Server] Client connected: {client.RemoteEndPoint}");
-                
-                // --- 修复点：分配 ID 并发送给客户端 ---
-                int id = ++_idCounter;
-                var loginMsg = new SCLogin { PlayerId = id };
-                byte[] data = ProtoHelper.Serialize(loginMsg);
-                server.Send(client, (ushort)SocketEvent.sc_login, data);
-                Console.WriteLine($"[Server] Assigned ID {id} to client.");
+                Console.WriteLine($"[Server] Client connected: {client.RemoteEndPoint}. Waiting for login...");
             };
 
             server.OnDisconnect += (client) =>
@@ -42,6 +33,18 @@ namespace Server
             {
                 switch ((SocketEvent)data.Type)
                 {
+                    case SocketEvent.cs_login:
+                        // 收到客户端上报的哈希 ID
+                        var loginReq = ProtoHelper.Deserialize<CSLogin>(data.Data);
+                        int hashId = loginReq.PlayerId;
+                        
+                        // 回传确认消息
+                        var loginAck = new SCLogin { PlayerId = hashId };
+                        server.Send(client, (ushort)SocketEvent.sc_login, ProtoHelper.Serialize(loginAck));
+                        
+                        Console.WriteLine($"[Server] Client logged in with Hash ID: {hashId}");
+                        break;
+
                     case SocketEvent.cs_input:
                         frameSync.CollectInput(client, data.Data);
                         break;
@@ -49,7 +52,7 @@ namespace Server
             };
 
             frameSync.Start();
-            Console.WriteLine("[Server] FrameSync started. Press 'S' to restart, 'K' to kick all, 'ESC' to exit.");
+            Console.WriteLine("[Server] FrameSync started. ESC to exit.");
 
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -69,8 +72,6 @@ namespace Server
                 {
                     var key = Console.ReadKey(true).Key;
                     if (key == ConsoleKey.Escape) running = false;
-                    if (key == ConsoleKey.S) { frameSync.Start(); Console.WriteLine("[Server] FrameSync RESTARTED"); }
-                    if (key == ConsoleKey.K) { server.KickOutAll(); Console.WriteLine("[Server] Kicked all clients"); }
                 }
 
                 Thread.Sleep(1);

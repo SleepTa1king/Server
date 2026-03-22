@@ -1,49 +1,62 @@
 ﻿using Client;
 using UnityEngine;
+using Utils;
+using Main;
 
 public class ClientMain : MonoBehaviour
 {
-    SocketClient _client;
-    ClientFrameSync _frameSync;
-    int _myPlayerId = 0; // 等待服务端分配
+    public static ClientMain Instance { get; private set; }
+
+    private SocketClient _client;
+    private ClientFrameSync _frameSync;
+    private int _myPlayerId = 0;
 
     private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+
+        // 订阅 UI 发来的登录请求信号
+        Signals.Get<LoginRequestSignal>().AddListener(OnLoginRequested);
+
         _client = new SocketClient("127.0.0.1", 6854);
 
         _client.OnConnectSuccess += () =>
         {
-            Debug.Log("连接服务端成功，等待分配 ID...");
+            Debug.Log("网络连接成功，发送哈希 ID...");
+            var req = new CSLogin { PlayerId = _myPlayerId };
+            _client.Send((ushort)SocketEvent.cs_login, ProtoHelper.Serialize(req));
         };
+
         _client.OnDisconnect += () =>
         {
             Debug.Log("断开连接");
             _frameSync?.Stop();
             PlayerManager.Instance.ClearAll();
         };
+
         _client.OnReceive += (pack) =>
         {
             switch ((SocketEvent)pack.Type)
             {
                 case SocketEvent.sc_login:
-                    // 1. 收到服务端分配的 ID
                     var loginMsg = ProtoHelper.Deserialize<SCLogin>(pack.Data);
-                    _myPlayerId = loginMsg.PlayerId;
-                    Debug.Log($"[Login] 分配到的 ID 是: {_myPlayerId}");
+                    Debug.Log($"[Login] 登录成功，最终确认 ID: {loginMsg.PlayerId}");
 
-                    // 2. 初始化帧同步并生成本地角色
-                    _frameSync = new ClientFrameSync(_client, _myPlayerId);
-                    PlayerManager.Instance.SpawnPlayer(_myPlayerId, Vector3.zero, isLocal: true);
+                    // 派发登录成功信号，UI 框架收到后会自动处理（例如关闭登录窗口）
+                    Signals.Get<LoginSuccessSignal>().Dispatch();
 
-                    // 3. 开启同步
+                    _frameSync = new ClientFrameSync(_client, loginMsg.PlayerId);
+                    PlayerManager.Instance.SpawnPlayer(loginMsg.PlayerId, Vector3.zero, isLocal: true);
                     _frameSync.Start();
                     break;
 
                 case SocketEvent.sc_frame:
-                    // 收到服务端帧数据
                     var frame = ProtoHelper.Deserialize<SCFrame>(pack.Data);
-
-                    // 在执行帧之前，检查是否有新玩家需要生成
                     foreach (var input in frame.Inputs)
                     {
                         if (PlayerManager.Instance.GetPlayer(input.PlayerId) == null)
@@ -52,30 +65,33 @@ public class ClientMain : MonoBehaviour
                             PlayerManager.Instance.SpawnPlayer(input.PlayerId, Vector3.zero, isLocal: false);
                         }
                     }
-
                     _frameSync?.ReceiveFrame(pack.Data);
                     break;
             }
         };
-        _client.OnError += (ex) =>
-        {
-            Debug.LogFormat("异常 >>> {0}", ex);
-        };
 
+        _client.OnError += (ex) => Debug.LogFormat("异常 >>> {0}", ex);
+    }
+
+    /// <summary>
+    /// 当监听到 UI 的登录信号时调用
+    /// </summary>
+    private void OnLoginRequested(string playerName)
+    {
+        _myPlayerId = playerName.GetHashCode();
+        Debug.Log($"[Client] 收到登录信号，玩家名: {playerName}, Hash: {_myPlayerId}");
         _client.Connect();
     }
 
     private void Update()
     {
-        // 1. 网络收发
         _client?.Tick(Time.deltaTime);
-
-        // 2. 帧同步
         _frameSync?.Tick(Time.deltaTime);
     }
 
     private void OnDestroy()
     {
+        Signals.Get<LoginRequestSignal>().RemoveListener(OnLoginRequested);
         _frameSync?.Stop();
         _client?.Close();
     }

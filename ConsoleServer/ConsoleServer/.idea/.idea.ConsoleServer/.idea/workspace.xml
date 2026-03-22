@@ -8,16 +8,44 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e6a607fb-d803-4203-bbf8-6069b518bef3" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.ConsoleServer/.idea/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../Scenes/SampleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Scenes/SampleScene.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../FSM/Entity/Entity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../FSM/Entity/Entity.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../FSM/Player/PlayerCamera.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../FSM/Player/PlayerCamera.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../FSM/Player/PlayerManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../FSM/Player/PlayerManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Main/ClientMain.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Main/ClientMain.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Main/ServerMain.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Main/ServerMain.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Proto/ProtoMessages.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Proto/ProtoMessages.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Proto/SocketEvent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Proto/SocketEvent.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Server/Socket/SocketServer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Server/Socket/SocketServer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Assets/Scripts/Main/ClientMain.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Assets/Scripts/Main/ClientMain.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ConsoleServer/.idea/projectSettingsUpdater.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ConsoleServer/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataBuffer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrameSyncManager.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProtoHelper.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SocketDataPack.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SocketServer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/Debug/net6.0/ConsoleServer.deps.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/Debug/net6.0/ConsoleServer.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/Debug/net6.0/ConsoleServer.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/Debug/net6.0/ConsoleServer.runtimeconfig.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/Debug/net6.0/System.Collections.Immutable.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/Debug/net6.0/protobuf-net.Core.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/Debug/net6.0/protobuf-net.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/ConsoleServer.csproj.nuget.dgspec.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/ConsoleServer.csproj.nuget.g.props" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/ConsoleServer.csproj.nuget.g.targets" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net6.0/.NETCoreApp,Version=v6.0.AssemblyAttributes.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net6.0/ConsoleServer.AssemblyInfo.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net6.0/ConsoleServer.AssemblyInfoInputs.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net6.0/ConsoleServer.GeneratedMSBuildEditorConfig.editorconfig" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net6.0/ConsoleServer.assets.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net6.0/ConsoleServer.csproj.AssemblyReference.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net6.0/ConsoleServer.csproj.CopyComplete" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net6.0/ConsoleServer.csproj.CoreCompileInputs.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net6.0/ConsoleServer.csproj.FileListAbsolute.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net6.0/ConsoleServer.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net6.0/ConsoleServer.genruntimeconfig.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net6.0/apphost.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net6.0/ref/ConsoleServer.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net6.0/refint/ConsoleServer.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/project.assets.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/project.nuget.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/project.packagespec.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/rider.project.model.nuget.info" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/rider.project.restore.info" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,22 +55,29 @@
   <component name="CopilotPersistence">
     <persistenceIdMap>
       <entry key="_E:/Unityprogram/U3D/Server/Assets/Scripts/ConsoleServer/ConsoleServer" value="3BEoGBwFkZAV0cB3fATnRH75K7s" />
+      <entry key="_E:/Unityprogram/U3D/Server/ConsoleServer/ConsoleServer" value="3BEup7d7QQMF794Br1cpmIFNA65" />
     </persistenceIdMap>
   </component>
+  <component name="DpaMonitoringSettings">
+    <option name="firstShow" value="false" />
+  </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="1" />
+    <option name="cachedIndexableFilesCount" value="6" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../../.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
   </component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 5
-}]]></component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="Toolset" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
   <component name="ProjectId" id="3BEoGBwFkZAV0cB3fATnRH75K7s" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -50,6 +85,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    ".NET 项目.ConsoleServer.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.MCP Project settings loaded": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -100,6 +136,7 @@
       <option name="presentableId" value="Default" />
       <updated>1774063494571</updated>
       <workItem from="1774063498694" duration="1296000" />
+      <workItem from="1774066732512" duration="2561000" />
     </task>
     <servers />
   </component>
