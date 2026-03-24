@@ -294,6 +294,12 @@ namespace UIFramework
         /// <returns></returns>
         public bool IsScreenRegistered(string screenId)
         {
+            if (windowLayer == null || panelLayer == null)
+            {
+                Debug.LogError("[UI Frame] PanelLayer or WindowLayer is missing. Please check the UIFrame hierarchy.");
+                return false;
+            }
+
             if (windowLayer.IsScreenRegistered(screenId))
                 return true;
             if (panelLayer.IsScreenRegistered(screenId))
@@ -303,6 +309,13 @@ namespace UIFramework
 
         public bool IsScreenRegistered(string screenId,out Type type)
         {
+            if (windowLayer == null || panelLayer == null)
+            {
+                Debug.LogError("[UI Frame] PanelLayer or WindowLayer is missing. Please check the UIFrame hierarchy.");
+                type = null;
+                return false;
+            }
+
             if (windowLayer.IsScreenRegistered(screenId))
             {
                 type = typeof(IWindowController);
