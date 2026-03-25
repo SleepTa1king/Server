@@ -8,15 +8,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e6a607fb-d803-4203-bbf8-6069b518bef3" name="更改" comment="">
-      <change beforePath="$PROJECT_DIR$/../../../../.idea/.idea.Server/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../.idea/.idea.Server/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../Prefab/StartWindow.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Prefab/StartWindow.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../Scenes/SampleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Scenes/SampleScene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ConsoleServer/.idea/indexLayout.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ConsoleServer/.idea/indexLayout.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ConsoleServer/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ConsoleServer/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/obj/rider.project.model.nuget.info" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../UIFramework/UIFrame.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../UIFramework/UIFrame.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../UIFramework/UISetting.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../UIFramework/UISetting.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../UIFramework/UIFrameworkExamples/Scripts/ScreenController/StartWindowController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../../UIFramework/UIFrameworkExamples/Scripts/ScreenController/StartWindowController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../UIFramework/UIFrameworkExamples/UISetting.asset" beforeDir="false" afterPath="$PROJECT_DIR$/../../../UIFramework/UIFrameworkExamples/UISetting.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,29 +44,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Project.ConsoleServer.executor": "Run",
-    ".NET 项目.ConsoleServer.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "main",
-    "junie.onboarding.icon.badge.shown": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Project.ConsoleServer.executor&quot;: &quot;Run&quot;,
+    &quot;.NET 项目.ConsoleServer.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;codex/unity/lua&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="ConsoleServer" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
@@ -106,7 +99,9 @@
       <updated>1774063494571</updated>
       <workItem from="1774063498694" duration="1296000" />
       <workItem from="1774101877756" duration="4209000" />
-      <workItem from="1774342270777" duration="754000" />
+      <workItem from="1774342270777" duration="2120000" />
+      <workItem from="1774409720848" duration="23000" />
+      <workItem from="1774409792838" duration="1549000" />
     </task>
     <servers />
   </component>

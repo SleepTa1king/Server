@@ -1,0 +1,9 @@
+﻿print("[Lua] main.lua loaded from StreamingAssets")
+
+local CS = CS
+
+CS.UnityEngine.Debug.Log("[Lua] Hello from StreamingAssets/main.lua.txt")
+
+function say_hello(name)
+    CS.UnityEngine.Debug.Log("[Lua] Hello, " .. tostring(name))
+end
